@@ -1,0 +1,14 @@
+.post__container {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .post__form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .post__label__textarea {
+    margin-bottom: 10px; 
+  }
+  
