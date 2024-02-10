@@ -2,6 +2,8 @@ import { useEffect } from "react";
 import useFetch from "../../../hooks/useFetch";
 import "./css/posts.css";
 import { Link } from "react-router-dom";
+import { Post } from "../../../context/types/Post";
+import { usePostContext } from "../../../context/hooks/usePostContext";
 
 /**
  * Renders a list of posts and provides functionality for deleting and editing posts.
@@ -9,6 +11,8 @@ import { Link } from "react-router-dom";
  * @returns {JSX.Element} The rendered list of posts
  */
 const PostsList = () => {
+  const { setEditPost } = usePostContext();
+
   const { data, isLoading, error, fetchNow } = useFetch({
     url: "http://localhost:7070/posts",
   });
@@ -30,8 +34,11 @@ const PostsList = () => {
       });
       fetchNow();
     } catch (error) {
-      console.error("Error deleting post:", error.message);
+      console.error("Error deleting post:", error);
     }
+  };
+  const handleEdit = (post: Post) => {
+    setEditPost(post);
   };
 
   if (isLoading) {
@@ -39,7 +46,7 @@ const PostsList = () => {
   }
 
   if (error) {
-    return <div>Error: {error.message}</div>;
+    return <div>Error: {error}</div>;
   }
 
   return (
@@ -51,7 +58,7 @@ const PostsList = () => {
               <p>{item.content}</p>
               <button onClick={() => handleDelete(item.id)}>Удалить</button>
               <Link to={`/posts/${item.id}`}>
-                <button>редактировать</button>
+                <button onClick={() => handleEdit(item)}>редактировать</button>
               </Link>
             </div>
           ))}

@@ -14,7 +14,7 @@ const ComponentPosts = () => {
       <Routes>
         <Route path="/" element={<PostsList />} />
         <Route path="/posts/new" element={<PostNews />} />
-        <Route path="/posts/:postId" element={<PostView />} />
+        <Route path="/posts/:id" element={<PostView />} />
       </Routes>
     </>
   );

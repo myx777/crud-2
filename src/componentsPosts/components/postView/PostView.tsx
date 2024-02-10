@@ -1,45 +1,38 @@
-import { useParams } from "react-router-dom";
 import useFetch from "../../../hooks/useFetch";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import PostFormContainer from "../posts/PostFormContainer";
+import { usePostContext } from "../../../context/hooks/usePostContext";
+
 /**
  * Компонент, срабатывающий при редактировании поста.
- * использует хук useParams для получения id нужного поста, и дальнейшей загрузкой поста
- * с сервера, использую id. при нажатии на крестик пост не сохраняется и осуществляется
- * переход на главную страницу, при отправке происходит вызов fetch и перезаписываение
- * поста
- *
- * так как данные на главной странице (Array: {id, content и еще какаято шляпа серверная})
- * и тут( post: {id, content, postId}) приходят немного в разных форматах, не знаю как отипизировать
+ * использует Контекст и вытаскивает оттуда редактируемый пост
+ * При нажатии на крестик пост не сохраняется и осуществляется
+ * переход на главную страницу, при отправке происходит вызов кастомного usefetch
+ * и перезаписываение поста
  *
  * @return {JSX.Element} перезаписанный jsx PostFormContainer при сохранении
  */
 const PostView = () => {
-  const { postId } = useParams();
-  const [content, setContent] = useState<string>(""); // Состояние для содержимого поста
+  const { editingPost } = usePostContext();
 
-  const { data, isLoading, error, fetchNow } = useFetch({
-    url: `http://localhost:7070/posts/${postId}`,
+  if (editingPost === null) return;
+
+  const [content, setContent] = useState(editingPost.content);
+
+  const { isLoading, error, fetchNow } = useFetch({
+    url: `http://localhost:7070/posts/${editingPost.id}`,
+    options: {
+      method: "PUT",
+      body: JSON.stringify({ content }),
+    },
   });
-
-  useEffect(() => {
-    fetchNow();
-  }, [postId]);
-
-  useEffect(() => {
-    if (data) {
-      setContent(data.post.content);
-      console.info(data);
-      
-    }
-  }, [data]);
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
   if (error) {
-    return <div>Error: {error.message}</div>;
+    return <div>Error: {error}</div>;
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -49,11 +42,7 @@ const PostView = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      await fetch(`http://localhost:7070/posts/${postId}`, {
-        method: "PUT",
-        body: JSON.stringify({ postId, content }),
-      });
-      setContent("");
+      await fetchNow();
       window.location.href = "/";
     } catch (error) {
       console.error("Error saving post:", error);
