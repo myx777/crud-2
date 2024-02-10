@@ -1,7 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useFetch from "../../../hooks/useFetch";
 import "./css/postNew.css";
-
+import PostFormContainer from "../posts/PostFormContainer";
+/**
+ * компонент создания нового поста. Использует кастомный useFetch,
+ * с помощью которого отправляет данные на сервер в JSON, сохраняет текущее
+ * введенное значение в textarea в localStorage, срок удаления не задан
+ *
+ * @return {JSX.Element} возвращает компонент PostFormContainer.
+ */
 const PostNews = () => {
   const [content, setContent] = useState<string>("");
   const [id, setId] = useState<number>(0);
@@ -15,49 +22,38 @@ const PostNews = () => {
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setContent(e.target.value);
+    const value = e.target.value;
+    setContent(value);
+    localStorage.setItem("content", JSON.stringify(value));
   };
+
+  useEffect(() => {
+    const storedItem = localStorage.getItem("content");
+    if (storedItem && storedItem !== null) {
+      const items = JSON.parse(localStorage.getItem("content"));
+      setContent(items);
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     await fetchNow();
-    setId(prevId => prevId + 1);
-    console.info("sending data:" + id + content);
-    setContent('');
-    
-  }
-  const loading = () => {
-    return isLoading ? (
-      <span className="will-submit__post">Публикация...</span>
-    ) : (
-      <span className="submit__post">Опубликовать</span>
-    );
+    setId((prevId) => prevId + 1);
+    window.location.href = "/";
+    setContent("");
   };
 
   return (
-    <div className="post__container">
-      <form action="" className="post__form" onSubmit={handleSubmit}>
-        <label htmlFor="post__texterea" className="post__label__textarea">
-          Напишите пост:
-        </label>
-        <textarea
-          id="post__texterea"
-          value={content}
-          onChange={handleChange}
-          name="content"
-          cols="30"
-          rows="5"
-        ></textarea>
-        <button type="submit" disabled={isLoading}>
-          {loading()}
-        </button>
-        {error && <div className="error__post">
-          <span>Ошибка отправки</span>
-        </div>}
-      </form>
-    </div>
+    <PostFormContainer
+      content={content}
+      handleChange={handleChange}
+      handleSubmit={handleSubmit}
+      isLoading={isLoading}
+      error={error}
+      contentLoadingButton={"Отправка...."}
+      contentButton={"Отправить"}
+    />
   );
-
 };
 
 export default PostNews;

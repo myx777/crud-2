@@ -1,13 +1,22 @@
 import { Route, Routes } from "react-router-dom";
 import PostNews from "./components/postsNew/PostsNew";
-import Posts from "./components/posts/Posts";
+import PostsList from "./components/PostList/PostsList";
+import PostView from "./components/postView/PostView";
 
+/**
+ * Renders a component to display different routes for displaying posts.
+ *
+ * @return {JSX.Element} The rendered component for displaying routes.
+ */
 const ComponentPosts = () => {
   return (
-    <Routes>
-        <Route path="/posts" element={<Posts />}/>
-      <Route path="/posts/new" element={<PostNews />} />
-    </Routes>
+    <>
+      <Routes>
+        <Route path="/" element={<PostsList />} />
+        <Route path="/posts/new" element={<PostNews />} />
+        <Route path="/posts/:postId" element={<PostView />} />
+      </Routes>
+    </>
   );
 };
 export default ComponentPosts;

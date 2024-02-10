@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FetchProps } from "./types/FetchProps";
 import { FetchStatusProps } from "./types/FetchStateProps";
 /**
@@ -17,7 +17,7 @@ const useFetch = <T extends RequestInit | undefined>({
     data: undefined,
     error: null,
   });
-  
+
   async function fetchNow() {
     setStatus((prevStatus) => ({ ...prevStatus, isLoading: true }));
 
@@ -27,13 +27,15 @@ const useFetch = <T extends RequestInit | undefined>({
         throw new Error(`Error fetch ${response.statusText}`);
       }
 
-      const json = await response.json();
-      console.info(json);
-      
-      setStatus((prevStatus) => ({ ...prevStatus, data: json }));
-      
+      const result = response.status === 204 ? null : await response.json();
+
+      setStatus((prevStatus) => ({
+        ...prevStatus,
+        data: result,
+        isLoading: false,
+        error: null,
+      }));
     } catch (e) {
-      console.error(e);
       setStatus((prevStatus) => ({
         ...prevStatus,
         isLoading: false,
@@ -43,17 +45,6 @@ const useFetch = <T extends RequestInit | undefined>({
       setStatus((prevStatus) => ({ ...prevStatus, isLoading: false }));
     }
   }
-
-  useEffect(() => {
-    let ignore = true;
-    if (url) {
-      fetchNow();
-      ignore = false;
-    }
-    return () => {
-      ignore = true;
-    };
-  }, [url]);
 
   return { ...status, fetchNow };
 };
