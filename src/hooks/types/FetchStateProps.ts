@@ -1,11 +1,5 @@
-type DataProps = {
-  content: string;
-  createdAt: number;
-  id: number;
-};
-
 export type FetchStatusProps = {
   isLoading: boolean;
-  error: Error | null;
-  data: DataProps[] | undefined;
-};
+  data?: Array<{content: string; createdAt: number; id: number}>;
+  error: string | null;
+}

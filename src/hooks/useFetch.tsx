@@ -35,11 +35,11 @@ const useFetch = <T extends RequestInit | undefined>({
         isLoading: false,
         error: null,
       }));
-    } catch (e) {
+    } catch (error: any) {
       setStatus((prevStatus) => ({
         ...prevStatus,
         isLoading: false,
-        error: e as Error,
+        error: error,
       }));
     } finally {
       setStatus((prevStatus) => ({ ...prevStatus, isLoading: false }));

@@ -9,7 +9,7 @@ import PostFormTextarea from "./PostFormTextarea";
  * @param {(e: React.ChangeEvent<HTMLTextAreaElement>) => void} handleChange - The function to handle content change
  * @param {(e: React.FormEvent<HTMLFormElement>) => void} handleSubmit - The function to handle form submission
  * @param {boolean} isLoading - Indicates if the form is currently loading
- * @param {null | Error} error - The error that occurred during form submission, if any
+ * @param {null | string} error - The error that occurred during form submission, if any
  * @param {string} contentLoadingButton - The label for the loading button
  * @param {string} contentButton - The label for the regular button
  * @return {JSX.Element} The form container component
@@ -27,7 +27,7 @@ const PostFormContainer = ({
   handleChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   isLoading: boolean;
-  error: null | Error;
+  error: null | string;
   contentLoadingButton: string;
   contentButton: string;
 }) => {

@@ -20,6 +20,7 @@ const PostNews = () => {
       body: JSON.stringify({ id, content }),
     },
   });
+console.info(error);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;

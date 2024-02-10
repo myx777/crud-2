@@ -29,6 +29,8 @@ const PostView = () => {
   useEffect(() => {
     if (data) {
       setContent(data.post.content);
+      console.info(data);
+      
     }
   }, [data]);
 
